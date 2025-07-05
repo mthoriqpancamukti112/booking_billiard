@@ -11,13 +11,23 @@ use Illuminate\Support\Facades\Validator;
 
 class PelangganController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // Ambil data pelanggan dengan relasi ke user
-        $data = Pelanggan::with('user')->get();
+        $search = $request->input('search');
 
-        // Kirim data ke view
-        return view('dashboard.pelanggan.index', compact('data'));
+        $data = Pelanggan::with('user')
+            ->when($search, function ($query, $search) {
+                return $query->where('nama_lengkap', 'like', "%{$search}%")
+                    ->orWhere('nomor_telepon', 'like', "%{$search}%")
+                    ->orWhereHas('user', function ($userQuery) use ($search) {
+                        $userQuery->where('name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%");
+                    });
+            })
+            ->latest() // Urutkan berdasarkan data terbaru
+            ->paginate(10); // Ambil 10 data per halaman
+
+        return view('dashboard.pelanggan.index', compact('data', 'search'));
     }
 
     /**

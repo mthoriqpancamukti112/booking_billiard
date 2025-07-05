@@ -4,6 +4,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Konfigurasi untuk Midtrans
+    |--------------------------------------------------------------------------
+    |
+    | Menghubungkan variabel dari file .env ke helper config() Laravel.
+    |
+    */
+    'midtrans' => [
+        'serverKey'    => env('MIDTRANS_SERVER_KEY'),
+        'clientKey'    => env('MIDTRANS_CLIENT_KEY'),
+        'isProduction' => env('MIDTRANS_IS_PRODUCTION', false),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Third Party Services
     |--------------------------------------------------------------------------
     |

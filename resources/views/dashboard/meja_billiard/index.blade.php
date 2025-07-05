@@ -2,25 +2,42 @@
 
 @section('title', 'Data Meja Billiard')
 
-@push('css')
-    {{-- CSS untuk DataTables --}}
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.bootstrap5.css">
-@endpush
+{{-- @push('css') untuk DataTables dihapus --}}
 
 @section('content')
     <div class="card">
         <div class="card-header">
-            <div class="d-flex justify-content-between align-items-center">
-                <h5 class="card-title">Data Meja Billiard</h5>
-                {{-- Tombol untuk mentrigger modal tambah --}}
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahDataModal">
-                    <i class="ti ti-plus"></i> Tambah Data
-                </button>
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h5 class="card-title">Data Meja Billiard</h5>
+                </div>
+                <div class="col-md-6 text-end">
+                    {{-- Tombol Tambah Data --}}
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahDataModal">
+                        <i class="ti ti-plus"></i> Tambah Data
+                    </button>
+                </div>
+            </div>
+            {{-- BARU: Form Pencarian ditambahkan di bawah header --}}
+            <div class="row mt-3">
+                <div class="col-md-6 ms-auto">
+                    <form action="{{ route('meja_billiard.index') }}" method="GET">
+                        <div class="input-group">
+                            <input type="text" name="search" class="form-control" placeholder="Cari no. meja / tipe..."
+                                value="{{ $search ?? '' }}">
+                            <button class="btn btn-primary" type="submit"><i class="ti ti-search"></i></button>
+                            <a href="{{ route('meja_billiard.index') }}" class="btn btn-outline-secondary" title="Refresh">
+                                <i class="ti ti-refresh"></i>
+                            </a>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
         <div class="card-body">
-            <div class="table-responsive mt-3">
-                <table id="myTable" class="table table-bordered table-striped">
+            <div class="table-responsive">
+                {{-- ID myTable dihapus --}}
+                <table class="table table-bordered table-striped">
                     <thead>
                         <tr>
                             <th>No</th>
@@ -32,44 +49,59 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($data as $row)
+                        @forelse ($data as $row)
                             <tr>
-                                <td>{{ $loop->iteration }}</td>
+                                {{-- DIUBAH: Penomoran disesuaikan dengan pagination --}}
+                                <td>{{ $loop->iteration + ($data->currentPage() - 1) * $data->perPage() }}</td>
                                 <td>{{ $row->nomor_meja }}</td>
                                 <td>{{ $row->tipe_meja ?? '-' }}</td>
                                 <td>Rp {{ number_format($row->harga_per_jam, 0, ',', '.') }}</td>
                                 <td>
                                     @if ($row->status == 'tersedia')
-                                        <span class="badge bg-success">Tersedia</span>
+                                        <span class="badge bg-light-success text-success">Tersedia</span>
                                     @elseif($row->status == 'digunakan')
-                                        <span class="badge bg-danger">Digunakan</span>
+                                        <span class="badge bg-light-danger text-danger">Digunakan</span>
                                     @else
-                                        <span class="badge bg-warning text-dark">Perbaikan</span>
+                                        <span class="badge bg-light-warning text-dark">Perbaikan</span>
                                     @endif
                                 </td>
                                 <td>
-                                    {{-- Tombol Edit diubah untuk mentrigger modal edit --}}
                                     <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal"
-                                        data-bs-target="#editDataModal-{{ $row->meja_id }}">
-                                        Edit
+                                        data-bs-target="#editDataModal-{{ $row->meja_id }}" style="border-radius: 50px;">
+                                        <i class="fas fa-pencil-alt"></i>
                                     </button>
-                                    {{-- Form Hapus diubah untuk menggunakan SweetAlert --}}
+
                                     <form action="{{ route('meja_billiard.destroy', $row->meja_id) }}" method="POST"
                                         class="d-inline delete-form">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+                                        <button type="submit" class="btn btn-danger btn-sm" style="border-radius: 50px;">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
                                     </form>
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr>
+                                <td colspan="6" class="text-center">
+                                    @if (!empty($search))
+                                        Data tidak ditemukan untuk pencarian "{{ $search }}".
+                                    @else
+                                        Belum ada data meja billiard.
+                                    @endif
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
+            </div>
+            {{-- BARU: Tautan Pagination --}}
+            <div class="mt-3">
+                {{ $data->appends(['search' => $search ?? ''])->links() }}
             </div>
         </div>
     </div>
 
-    <!-- Modal Tambah Data -->
     <div class="modal fade" id="tambahDataModal" tabindex="-1" aria-labelledby="tambahDataModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -93,7 +125,8 @@
                             <label for="tipe_meja" class="form-label">Tipe Meja</label>
                             <select class="form-select @error('tipe_meja', 'store') is-invalid @enderror" name="tipe_meja">
                                 <option value="" disabled selected>-- Pilih Tipe --</option>
-                                <option value="9-ft Reguler" {{ old('tipe_meja') == '9-ft Reguler' ? 'selected' : '' }}>9-ft
+                                <option value="9-ft Reguler" {{ old('tipe_meja') == '9-ft Reguler' ? 'selected' : '' }}>
+                                    9-ft
                                     Reguler</option>
                                 <option value="9-ft VIP" {{ old('tipe_meja') == '9-ft VIP' ? 'selected' : '' }}>9-ft VIP
                                 </option>
@@ -140,7 +173,6 @@
         </div>
     </div>
 
-    <!-- Modal Edit Data (dibuat di dalam loop) -->
     @foreach ($data as $row)
         <div class="modal fade" id="editDataModal-{{ $row->meja_id }}" tabindex="-1"
             aria-labelledby="editDataModalLabel-{{ $row->meja_id }}" aria-hidden="true">
@@ -226,13 +258,9 @@
 @endsection
 
 @push('js')
-    {{-- JS untuk DataTables --}}
-    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
-    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap5.js"></script>
+    {{-- Hapus script DataTables, pertahankan script SweetAlert --}}
     <script>
-        new DataTable('#myTable');
-
-        // SCRIPT UNTUK SWEETALERT TOAST
+        // SCRIPT SWEETALERT (Tidak ada perubahan)
         @if (session('success'))
             Swal.fire({
                 icon: 'success',
@@ -246,24 +274,23 @@
             });
         @endif
 
-        // SCRIPT UNTUK SWEETALERT KONFIRMASI HAPUS
         document.addEventListener('DOMContentLoaded', function() {
             const deleteForms = document.querySelectorAll('.delete-form');
             deleteForms.forEach(form => {
                 form.addEventListener('submit', function(event) {
-                    event.preventDefault(); // Mencegah form submit secara langsung
+                    event.preventDefault();
                     Swal.fire({
                         title: 'Apakah Anda yakin?',
                         text: "Data yang dihapus tidak dapat dikembalikan!",
                         icon: 'warning',
                         showCancelButton: true,
-                        confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#d33',
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
                         confirmButtonText: 'Ya, hapus!',
                         cancelButtonText: 'Batal'
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            form.submit(); // Submit form jika dikonfirmasi
+                            form.submit();
                         }
                     });
                 });
@@ -273,9 +300,11 @@
         // SCRIPT UNTUK MENAMPILKAN MODAL JIKA ADA ERROR VALIDASI
         @if ($errors->any())
             var errorModalId = '';
+            // Cek jika error berasal dari form 'store'
             @if ($errors->hasBag('store'))
                 errorModalId = 'tambahDataModal';
-            @elseif ($errors->hasBag('update'))
+                // Cek jika error berasal dari form 'update'
+            @elseif (session('failed_id'))
                 var failedId = '{{ session('failed_id') }}';
                 errorModalId = 'editDataModal-' + failedId;
             @endif

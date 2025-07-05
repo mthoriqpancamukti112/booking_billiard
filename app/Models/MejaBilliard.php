@@ -16,4 +16,10 @@ class MejaBilliard extends Model
     {
         return $this->hasMany(Booking::class, 'meja_id');
     }
+
+    public function activeBooking()
+    {
+        // Meja hanya punya satu booking aktif pada satu waktu
+        return $this->hasOne(Booking::class, 'meja_id');
+    }
 }

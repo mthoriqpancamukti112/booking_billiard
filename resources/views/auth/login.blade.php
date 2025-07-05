@@ -7,6 +7,10 @@
     <title>Login - Billiard</title>
     <link rel="shortcut icon" type="image/png" href="/backend/assets/images/logos/logo.png" />
     <link rel="stylesheet" href="/backend/assets/css/styles.min.css" />
+
+    <head>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    </head>
     <style>
         .password-container {
             position: relative;
@@ -43,20 +47,33 @@
                                     <div class="mb-3">
                                         <label for="InputEmail" class="form-label">Email</label>
                                         <input type="email" class="form-control" id="InputEmail" name="email"
-                                            placeholder="Masukan email anda" required>
+                                            placeholder="Masukan email anda" style="border-radius: 50px;">
+
+                                        @error('email')
+                                            <div class="text-danger mt-1 small">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
                                     </div>
                                     <div class="mb-4 password-container">
                                         <label for="InputPassword" class="form-label">Password</label>
                                         <input type="password" class="form-control" id="InputPassword" name="password"
-                                            placeholder="Masukan password anda" required>
-                                        <i class="ti ti-eye-off password-toggle-icon" id="togglePassword"></i>
+                                            placeholder="Masukan password anda" style="border-radius: 50px;">
+                                        <i class="fas fa-eye-slash password-toggle-icon" style="font-size: 18px;"
+                                            id="togglePassword"></i>
+
+                                        @error('password')
+                                            <div class="text-danger mt-1 small">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
                                     </div>
 
                                     <button type="submit"
                                         class="btn btn-primary w-100 fs-4 mb-4 rounded-5">Login</button>
 
                                     <div class="d-flex align-items-center justify-content-center">
-                                        <p class="fs-4 mb-0 fw-bold">Belum punya akun?</p>
+                                        <p class="mb-0 fw-bold">Belum punya akun?</p>
                                         <a class="text-primary fw-bold ms-2" href="{{ route('register.index') }}">Buat
                                             Akun</a>
                                     </div>
@@ -111,8 +128,8 @@
                 password.setAttribute('type', type);
 
                 // Ganti ikon mata
-                this.classList.toggle('ti-eye-off');
-                this.classList.toggle('ti-eye');
+                this.classList.toggle('fa-eye');
+                this.classList.toggle('fa-eye-slash');
             });
         });
     </script>

@@ -10,7 +10,16 @@ class Booking extends Model
     use HasFactory;
     protected $table = 'bookings';
     protected $primaryKey = 'booking_id';
-    protected $fillable = ['user_id', 'meja_id', 'waktu_mulai', 'waktu_selesai', 'durasi_menit', 'total_biaya', 'status_booking'];
+    protected $fillable = [
+        'user_id',
+        'meja_id',
+        'waktu_mulai',
+        'waktu_selesai',
+        'durasi_menit',
+        'total_biaya',
+        'status_booking',
+        'status_pembayaran',
+    ];
 
     protected $casts = [
         'waktu_mulai' => 'datetime',
@@ -25,5 +34,10 @@ class Booking extends Model
     public function meja()
     {
         return $this->belongsTo(MejaBilliard::class, 'meja_id');
+    }
+
+    public function pembayaran()
+    {
+        return $this->hasOne(Pembayaran::class, 'booking_id', 'booking_id');
     }
 }

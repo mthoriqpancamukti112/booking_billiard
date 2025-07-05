@@ -29,28 +29,55 @@
                                     <div class="mb-3">
                                         <label for="InputName" class="form-label">Username</label>
                                         <input type="text" class="form-control" id="InputName" name="name"
-                                            value="{{ old('name') }}" placeholder="Masukkan username Anda">
+                                            value="{{ old('name') }}" placeholder="Masukkan username Anda"
+                                            style="border-radius: 50px;">
+
+                                        @error('name')
+                                            <div class="text-danger mt-1 small">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
                                     </div>
                                     <div class="mb-3">
                                         <label for="InputEmail" class="form-label">Email</label>
                                         <input type="email" class="form-control" id="InputEmail" name="email"
-                                            value="{{ old('email') }}" placeholder="Masukkan alamat email Anda">
+                                            value="{{ old('email') }}" placeholder="Masukkan alamat email Anda"
+                                            style="border-radius: 50px;">
+
+                                        @error('email')
+                                            <div class="text-danger mt-1 small">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
                                     </div>
                                     <div class="mb-3">
                                         <label for="InputPassword" class="form-label">Password</label>
                                         <input type="password" class="form-control" id="InputPassword" name="password"
-                                            placeholder="Minimal 8 karakter">
+                                            placeholder="Minimal 8 karakter" style="border-radius: 50px;">
+
+                                        @error('password')
+                                            <div class="text-danger mt-1 small">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
                                     </div>
                                     <div class="mb-3">
                                         <label for="InputNamaLengkap" class="form-label">Nama Lengkap</label>
                                         <input type="text" class="form-control" id="InputNamaLengkap"
                                             name="nama_lengkap" value="{{ old('nama_lengkap') }}"
-                                            placeholder="Masukkan nama lengkap Anda">
+                                            placeholder="Masukkan nama lengkap Anda" style="border-radius: 50px;">
+
+                                        @error('nama_lengkap')
+                                            <div class="text-danger mt-1 small">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
                                     </div>
                                     <div class="mb-3">
                                         <label for="InputJenisKelamin" class="form-label">Jenis Kelamin</label>
-                                        <select class="form-select" id="InputJenisKelamin" name="jenis_kelamin">
-                                            <option value="" disabled selected>-- Pilih Jenis Kelamin --</option>
+                                        <select class="form-select" id="InputJenisKelamin" name="jenis_kelamin"
+                                            style="border-radius: 50px;">
+                                            <option value="" disabled selected>-- Pilih --</option>
                                             <option value="Laki-laki"
                                                 {{ old('jenis_kelamin') == 'Laki-laki' ? 'selected' : '' }}>Laki-laki
                                             </option>
@@ -58,19 +85,32 @@
                                                 {{ old('jenis_kelamin') == 'Perempuan' ? 'selected' : '' }}>Perempuan
                                             </option>
                                         </select>
+
+                                        @error('jenis_kelamin')
+                                            <div class="text-danger mt-1 small">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
                                     </div>
                                     <div class="mb-4">
                                         <label for="InputNomorTelepon" class="form-label">Nomor Telepon</label>
                                         <input type="text" class="form-control" id="InputNomorTelepon"
                                             name="nomor_telepon" value="{{ old('nomor_telepon') }}"
-                                            placeholder="Contoh: 081234567890">
+                                            placeholder="Contoh: 081234567890" style="border-radius: 50px;">
+
+                                        @error('nomor_telepon')
+                                            <div class="text-danger mt-1 small">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
                                     </div>
 
                                     <button type="submit"
                                         class="btn btn-primary w-100 fs-4 mb-4 rounded-5">Daftar</button>
                                     <div class="d-flex align-items-center justify-content-center">
-                                        <p class="fs-4 mb-0 fw-bold">Sudah punya akun?</p>
-                                        <a class="text-primary fw-bold ms-2" href="{{ route('login.index') }}">Login</a>
+                                        <p class="mb-0 fw-bold">Sudah punya akun?</p>
+                                        <a class="text-primary fw-bold ms-2"
+                                            href="{{ route('login.index') }}">Login</a>
                                     </div>
                                 </form>
                             </div>
@@ -85,26 +125,11 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-        // Menampilkan alert jika ada error dari session
         @if (session('error'))
             Swal.fire({
                 icon: 'error',
                 title: 'Registrasi Gagal!',
                 text: '{{ session('error') }}',
-            });
-        @endif
-
-        // Menampilkan alert jika ada error validasi
-        @if ($errors->any())
-            let errorMessages = '';
-            @foreach ($errors->all() as $error)
-                errorMessages += '<li>{{ $error }}</li>';
-            @endforeach
-
-            Swal.fire({
-                icon: 'error',
-                title: 'Validasi Gagal!',
-                html: '<ul>' + errorMessages + '</ul>',
             });
         @endif
     </script>

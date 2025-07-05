@@ -14,7 +14,7 @@ class PreventBackHistoryCache
         return $response->withHeaders([
             'Cache-Control' => 'no-cache, no-store, must-revalidate',
             'Pragma' => 'no-cache',
-            'Expires' => '0',
+            'Expires' => 'Sat, 01 Jan 2000 00:00:00 GMT',
         ]);
     }
 }

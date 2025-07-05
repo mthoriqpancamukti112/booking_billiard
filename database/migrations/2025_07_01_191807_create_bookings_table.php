@@ -20,6 +20,8 @@ return new class extends Migration
             $table->integer('durasi_menit')->nullable();
             $table->decimal('total_biaya', 10, 2)->nullable();
             $table->enum('status_booking', ['dipesan', 'berlangsung', 'selesai', 'dibatalkan'])->default('dipesan');
+            $table->enum('status_pembayaran', ['belum_bayar', 'dp_lunas', 'lunas', 'gagal'])
+                ->default('belum_bayar');
             $table->timestamps();
         });
     }

@@ -16,8 +16,13 @@ class LoginController extends Controller
     {
         // 1. Validasi input
         $credentials = $request->validate([
-            'email' => ['required', 'email'],
+            'email' => ['required', 'email', 'ends_with:@gmail.com'],
             'password' => ['required'],
+        ], [
+            'email.required' => 'Alamat email wajib diisi.',
+            'email.email' => 'Format email yang Anda masukkan tidak valid.',
+            'password.required' => 'Password wajib diisi.',
+            'email.ends_with' => 'Hanya alamat email @gmail.com yang diizinkan.',
         ]);
 
         // 2. Coba untuk login

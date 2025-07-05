@@ -58,10 +58,4 @@ class User extends Authenticatable
     {
         return $this->hasMany(Booking::class, 'user_id');
     }
-
-    // Relasi ke tabel waiting_list
-    public function waitingList()
-    {
-        return $this->hasMany(WaitingList::class, 'user_id');
-    }
 }

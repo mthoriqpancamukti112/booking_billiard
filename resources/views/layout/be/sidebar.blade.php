@@ -70,12 +70,12 @@
                         </a>
                     </li>
                     <li class="sidebar-item">
-                        <a class="sidebar-link sidebar-link indigo-hover-bg"
-                            href="{{ route('admin.waitinglist.index') }}" aria-expanded="false">
+                        <a class="sidebar-link sidebar-link indigo-hover-bg" href="{{ route('settings.index') }}"
+                            aria-expanded="false">
                             <span class="aside-icon p-2 bg-light-indigo rounded-3">
-                                <i class="ti ti-clock fs-7 text-indigo"></i>
+                                <i class="ti ti-settings fs-7 text-indigo"></i>
                             </span>
-                            <span class="hide-menu ms-2 ps-1">Data Waiting List</span>
+                            <span class="hide-menu ms-2 ps-1">Pengaturan</span>
                         </a>
                     </li>
                 @endif
@@ -105,15 +105,6 @@
                                 <i class="ti ti-history fs-7 text-success"></i>
                             </span>
                             <span class="hide-menu ms-2 ps-1">Riwayat Booking Saya</span>
-                        </a>
-                    </li>
-                    <li class="sidebar-item">
-                        <a class="sidebar-link sidebar-link danger-hover-bg" href="{{ route('waitinglist.status') }}"
-                            aria-expanded="false">
-                            <span class="aside-icon p-2 bg-light-danger rounded-3">
-                                <i class="ti ti-hourglass fs-7 text-danger"></i>
-                            </span>
-                            <span class="hide-menu ms-2 ps-1">Posisi Antrian Saya</span>
                         </a>
                     </li>
                 @endif

@@ -7,6 +7,8 @@
     <title>@yield('title', 'Dashboard')</title>
     <link rel="shortcut icon" type="image/png" href="/backend/assets/images/logos/logo.png" />
     <link rel="stylesheet" href="/backend/assets/css/styles.min.css" />
+    <link rel="stylesheet" href="/backend/assets/css/app.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
     @stack('css')
 </head>
 

@@ -2,16 +2,34 @@
 
 @section('title', 'Data Pelanggan')
 
-@push('css')
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.bootstrap5.css">
-@endpush
-
 @section('content')
     <div class="card">
+        <div class="card-header">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h5 class="card-title mb-0">Data Semua Pelanggan</h5>
+                </div>
+                <div class="col-md-6">
+                    {{-- BARU: Form Pencarian --}}
+                    <form action="{{ route('pelanggan.index') }}" method="GET">
+                        <div class="input-group">
+                            <input type="text" name="search" class="form-control"
+                                placeholder="Cari nama, username, email..." value="{{ $search ?? '' }}">
+                            <button class="btn btn-primary" type="submit">
+                                <i class="ti ti-search"></i> Cari
+                            </button>
+                            <a href="{{ route('pelanggan.index') }}" class="btn btn-outline-secondary" title="Refresh">
+                                <i class="ti ti-refresh"></i>
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
         <div class="card-body">
-            <h5 class="card-title">Data Semua Pelanggan</h5>
             <div class="table-responsive mt-3">
-                <table id="myTable" class="table table-bordered table-striped">
+                {{-- ID myTable dihapus --}}
+                <table class="table table-bordered table-striped">
                     <thead>
                         <tr>
                             <th>No</th>
@@ -24,9 +42,10 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($data as $row)
+                        @forelse ($data as $row)
                             <tr>
-                                <td>{{ $loop->iteration }}</td>
+                                {{-- DIUBAH: Penomoran disesuaikan dengan pagination --}}
+                                <td>{{ $loop->iteration + ($data->currentPage() - 1) * $data->perPage() }}</td>
                                 <td>{{ $row->nama_lengkap }}</td>
                                 <td>{{ $row->user->name }}</td>
                                 <td>{{ $row->user->email }}</td>
@@ -34,28 +53,42 @@
                                 <td>{{ $row->jenis_kelamin }}</td>
                                 <td>
                                     <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal"
-                                        data-bs-target="#editDataModal-{{ $row->pelanggan_id }}">
-                                        Edit
+                                        data-bs-target="#editDataModal-{{ $row->pelanggan_id }}"
+                                        style="border-radius: 50px;">
+                                        <i class="fas fa-pencil-alt"></i>
                                     </button>
                                     <form action="{{ route('pelanggan.destroy', $row->pelanggan_id) }}" method="POST"
                                         class="d-inline delete-form">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+                                        <button type="submit" class="btn btn-danger btn-sm" style="border-radius: 50px;">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
                                     </form>
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr>
+                                <td colspan="7" class="text-center">
+                                    Data tidak ditemukan.
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
+            </div>
+            {{-- BARU: Tautan Pagination --}}
+            <div class="mt-3">
+                {{ $data->appends(['search' => $search ?? ''])->links() }}
             </div>
         </div>
     </div>
 
-    <!-- Modal Edit Data -->
+    {{-- Modal Edit Data (Tidak ada perubahan) --}}
     @foreach ($data as $row)
         <div class="modal fade" id="editDataModal-{{ $row->pelanggan_id }}" tabindex="-1"
             aria-labelledby="editDataModalLabel-{{ $row->pelanggan_id }}" aria-hidden="true">
+            {{-- Isi modal tetap sama --}}
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -69,17 +102,19 @@
                             {{-- User Data --}}
                             <div class="mb-3">
                                 <label for="name" class="form-label">Username</label>
-                                <input type="text" class="form-control @error('name', 'update') is-invalid @enderror"
+                                <input type="text"
+                                    class="form-control @error('name', "update-{$row->pelanggan_id}") is-invalid @enderror"
                                     name="name" value="{{ old('name', $row->user->name) }}">
-                                @error('name', 'update')
+                                @error('name', "update-{$row->pelanggan_id}")
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email</label>
-                                <input type="email" class="form-control @error('email', 'update') is-invalid @enderror"
+                                <input type="email"
+                                    class="form-control @error('email', "update-{$row->pelanggan_id}") is-invalid @enderror"
                                     name="email" value="{{ old('email', $row->user->email) }}">
-                                @error('email', 'update')
+                                @error('email', "update-{$row->pelanggan_id}")
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -88,15 +123,16 @@
                             <div class="mb-3">
                                 <label for="nama_lengkap" class="form-label">Nama Lengkap</label>
                                 <input type="text"
-                                    class="form-control @error('nama_lengkap', 'update') is-invalid @enderror"
+                                    class="form-control @error('nama_lengkap', "update-{$row->pelanggan_id}") is-invalid @enderror"
                                     name="nama_lengkap" value="{{ old('nama_lengkap', $row->nama_lengkap) }}">
-                                @error('nama_lengkap', 'update')
+                                @error('nama_lengkap', "update-{$row->pelanggan_id}")
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="mb-3">
                                 <label for="jenis_kelamin" class="form-label">Jenis Kelamin</label>
-                                <select class="form-select @error('jenis_kelamin', 'update') is-invalid @enderror"
+                                <select
+                                    class="form-select @error('jenis_kelamin', "update-{$row->pelanggan_id}") is-invalid @enderror"
                                     name="jenis_kelamin">
                                     <option value="Laki-laki"
                                         {{ old('jenis_kelamin', $row->jenis_kelamin) == 'Laki-laki' ? 'selected' : '' }}>
@@ -105,16 +141,16 @@
                                         {{ old('jenis_kelamin', $row->jenis_kelamin) == 'Perempuan' ? 'selected' : '' }}>
                                         Perempuan</option>
                                 </select>
-                                @error('jenis_kelamin', 'update')
+                                @error('jenis_kelamin', "update-{$row->pelanggan_id}")
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="mb-3">
                                 <label for="nomor_telepon" class="form-label">Nomor Telepon</label>
                                 <input type="text"
-                                    class="form-control @error('nomor_telepon', 'update') is-invalid @enderror"
+                                    class="form-control @error('nomor_telepon', "update-{$row->pelanggan_id}") is-invalid @enderror"
                                     name="nomor_telepon" value="{{ old('nomor_telepon', $row->nomor_telepon) }}">
-                                @error('nomor_telepon', 'update')
+                                @error('nomor_telepon', "update-{$row->pelanggan_id}")
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -131,12 +167,9 @@
 @endsection
 
 @push('js')
-    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
-    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap5.js"></script>
+    {{-- Hapus script DataTables, pertahankan script SweetAlert --}}
     <script>
-        new DataTable('#myTable');
-
-        // SweetAlert Toast untuk sukses/error
+        // SweetAlert Toast untuk sukses/error (Tidak ada perubahan)
         @if (session('success'))
             Swal.fire({
                 icon: 'success',
@@ -162,7 +195,7 @@
             });
         @endif
 
-        // SweetAlert untuk konfirmasi hapus
+        // SweetAlert untuk konfirmasi hapus (Tidak ada perubahan)
         document.addEventListener('DOMContentLoaded', function() {
             const deleteForms = document.querySelectorAll('.delete-form');
             deleteForms.forEach(form => {
@@ -187,7 +220,8 @@
         });
 
         // Membuka kembali modal jika ada error validasi
-        @if ($errors->hasBag('update'))
+        // Perlu sedikit modifikasi di controller agar ini bekerja dengan baik
+        @if ($errors->any() && session('failed_id'))
             var failedId = '{{ session('failed_id') }}';
             var myModal = new bootstrap.Modal(document.getElementById('editDataModal-' + failedId), {
                 keyboard: false
