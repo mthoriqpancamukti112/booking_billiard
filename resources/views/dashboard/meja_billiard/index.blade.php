@@ -13,7 +13,8 @@
                 </div>
                 <div class="col-md-6 text-end">
                     {{-- Tombol Tambah Data --}}
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahDataModal">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahDataModal"
+                        style="border-radius: 50px">
                         <i class="ti ti-plus"></i> Tambah Data
                     </button>
                 </div>

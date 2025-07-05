@@ -302,37 +302,24 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     @if (Auth::user()->role == 'admin')
         <script>
-            const ctx = document.getElementById('bookingChart')?.getContext('2d');
-            if (ctx) {
-                const bookingChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: {!! json_encode($chart_labels) !!},
-                        datasets: [{
-                                label: 'Booking',
-                                data: {!! json_encode($chart_data_bookings) !!},
-                                backgroundColor: 'rgba(54, 162, 235, 0.6)'
-                            },
-                            {
-                                label: 'Pendapatan',
-                                data: {!! json_encode($chart_data_income) !!},
-                                backgroundColor: 'rgba(75, 192, 192, 0.6)'
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: {
-                                    stepSize: 1
-                                }
-                            }
+            const ctx = document.getElementById('bookingChart').getContext('2d');
+            const bookingChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: {!! $chart_labels !!},
+                    datasets: [{
+                            label: 'Booking',
+                            data: {!! $chart_data_bookings !!},
+                            backgroundColor: 'rgba(54, 162, 235, 0.6)'
+                        },
+                        {
+                            label: 'Pendapatan',
+                            data: {!! $chart_data_income !!},
+                            backgroundColor: 'rgba(75, 192, 192, 0.6)'
                         }
-                    }
-                });
-            }
+                    ]
+                }
+            });
         </script>
     @endif
 
